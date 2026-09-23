@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоды</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <div class="hero-copy panel">
+            <h1>Сервис прогноза погоды</h1>
+            <p class="subtitle">
+                Выберите город и источник данных, чтобы узнать температуру, влажность
+                и краткое описание текущих погодных условий.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <strong>2+</strong>
+                    <span>источника данных</span>
+                </div>
+                <div class="hero-stat">
+                    <strong>2+</strong>
+                    <span>погодных показателя</span>
+                </div>
+                <div class="hero-stat">
+                    <strong>24/7</strong>
+                    <span>доступ к сервису</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-card panel">
+            <h2>Поиск погоды</h2>
+            <form method="get" action="/">
+                <div class="field">
+                    <label for="city">Город</label>
+                    <input id="city" name="city" type="text" placeholder="Например, Калининград" th:value="${selectedCity}" required>
+                    <p class="helper-text">Можно вводить название города на русском или латиницей.</p>
+                </div>
+
+                <div class="field">
+                    <label for="source">Источник данных</label>
+                    <select id="source" name="source" required>
+                        <option th:each="sourceItem : ${sources}"
+                                th:value="${sourceItem.key()}"
+                                th:text="${sourceItem.name()}"
+                                th:selected="${sourceItem.key() == selectedSource}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit">Показать прогноз</button>
+            </form>
+
+            <div class="error" th:if="${error}" th:text="${error}"></div>
+        </div>
+    </section>
+
+    <section class="weather-card panel" th:if="${weather}">
+        <div class="weather-header">
+            <div>
+                <h2 class="weather-location" th:text="${weather.city()}">Минск</h2>
+                <p class="weather-source">
+                    Источник:
+                    <strong th:text="${weather.source()}">Open-Meteo</strong>
+                </p>
+            </div>
+
+            <div class="temperature-badge">
+                <span class="value" th:text="${weather.temperatureCelsius()} + '°C'">12°C</span>
+                <span class="label">Текущая температура</span>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <article class="metric">
+                <p class="metric-title">Влажность</p>
+                <p class="metric-value" th:text="${weather.humidityPercent()} + '%'">67%</p>
+            </article>
+
+            <article class="metric">
+                <p class="metric-title">Погодные условия</p>
+                <p class="metric-value" th:text="${weather.description()}">Ясно</p>
+            </article>
+
+            <article class="metric">
+                <p class="metric-title">Скорость ветра</p>
+                <p class="metric-value" th:text="${weather.wind()} + ' м/c'">12</p>
+            </article>
+        </div>
+
+        <p class="footer-note">
+            Данные обновляются по запросу и зависят от выбранного внешнего погодного сервиса.
+        </p>
+    </section>
+</main>
+</body>
+</html>
